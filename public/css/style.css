@@ -1,0 +1,47 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#question {
+	font-size: 100px;
+}
+
+#answerLabel {
+	font-size: 60px;	
+	float: left;
+}
+#answer {
+	font-size: 50px;	
+	width: 100px;
+	padding: 15px;
+	float: left;
+}
+#correct {
+	margin-left: 100px;
+	float: left;
+	font-size: 12pt;
+}
+#wrong {
+	margin-left: 100px;
+	float: left;
+	font-size: 12pt;
+}
+
+.timeLabel {
+	clear: left;
+	float: left;
+	font-weight: bold;
+}
+
+.time {
+	float: left;
+	margin-left: 20px;
+	width: 100px;
+	color: white;
+	text-align: center;
+}
