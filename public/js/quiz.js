@@ -147,6 +147,7 @@ function question() {
    }
    
    $( "#question" ).text(question);
+   speak(question, {pitch: 70, speed: 250});
    
    $( "#answer").val("");
    $( "#answer").focus();
@@ -188,12 +189,15 @@ function answer() {
     	$( "#correct" ).show(1);
    	    $( "#correct" ).fadeOut(4000);
    	    $( "#wrong" ).hide();
+//   	    speak("You're smart");
     	question();
     } else if(answer.val().length == (_ANSWER+"").length) {
    		$( "#answer").select();
     	$( "#wrong" ).show(1);
     	$( "#wrong" ).fadeOut(4000);
    	    $( "#correct" ).hide();
+   	    
+   	    speak("Oops");
     }
 }
 
@@ -205,6 +209,21 @@ function initialize() {
    
    $("#answer").keyup(answer);
    question();
+   
+   $( "#helpLink" ).click(function() { $("#help").dialog("open")});
+   $( "#help" ).dialog({
+  dialogClass: "no-close",
+  autoOpen: false,
+  buttons: [
+    {
+      text: "OK",
+      click: function() {
+        $( this ).dialog( "close" );
+      }
+    }
+  ]
+});
+
 }
 
 $(window).load(initialize);

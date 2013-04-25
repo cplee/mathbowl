@@ -8,11 +8,13 @@
 <link href="/css/style.css" rel="stylesheet" media="screen">
 </head>
 <body>
+    
 	<div id="roundChoice">
 		<input type="radio" id="round1" name="round" checked="checked" value="1"><label for="round1">Round 1</label> 
 		<input type="radio" id="round2" name="round" value="2"><label for="round2">Round 2</label> 
 		<input type="radio" id="round3" name="round" value="3"><label for="round3">Round 3</label> 
 		<input type="radio" id="round4" name="round" value="4"><label for="round4">Round 4</label>
+
 	</div>
 
 	<span id="question" class="ui-state-error ui-corner-all"></span>
@@ -27,14 +29,20 @@
 		<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
 		Oops! &#9785;
 	</div>
-	
 	<br/>
+	
 	<div class="timeLabel">Round1 Time: </div><div id="time1" class="time ui-widget ui-corner-all"></div>
 	<div class="timeLabel">Round2 Time: </div><div id="time2" class="time ui-widget ui-corner-all"></div>
 	<div class="timeLabel">Round3 Time: </div><div id="time3" class="time ui-widget ui-corner-all"></div>
 	<div class="timeLabel">Round4 Time: </div><div id="time4" class="time ui-widget ui-corner-all"></div>
+	
+	<div id="audio"></div>
+
+	
 	<script src="/js/jquery-1.9.1.min.js"></script>
 	<script src="/js/jquery-ui-1.10.2.custom.min.js"></script>
+	<script src="/js/speakClient.js"></script>
 	<script src="/js/quiz.js"></script>
+	
 </body>
 </html>
