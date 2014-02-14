@@ -4,7 +4,7 @@ var Q = new Quiz();
 Q.getGrade(1)
     // sum
     .addRound(function (q) {
-        var prompt = q.join(" ");
+        var prompt = q.join(" + ");
         var answer = 0;
         q.map(function (v) { answer += v;});
         return new Question(prompt,answer);
@@ -141,11 +141,6 @@ Q.getGrade(1)
         .addQuestion([-4,35]);
 
 
-var _ANSWER;
-var _START;
-var _ANSWERED = new Array();
-var _TIME = new Array();
-
 // Prototype definitions
 function Quiz() {
     this.grades = [];
@@ -173,9 +168,10 @@ function Quiz() {
     };
     
     this.getCurrentGrade = function() {
-            if(!this.curGrade) { 
-                this.curGrade = this.grades[0];
-            }
+	if(!this.curGrade) { 
+		this.curGrade = this.grades[0];
+	}
+	return this.curGrade;
     };
     
     this.setCurrentGrade = function(grade_id) {
@@ -200,8 +196,8 @@ function Grade(id,label) {
     };
     
     this.addRound = function(questionFactory) {
-        var round = new Round(questionFactory);
-        this.rounds.add(round);
+        var round = new Round(this.rounds.length+1,questionFactory);
+        this.rounds.push(round);
         return round;
     };
     
@@ -240,6 +236,10 @@ function Round(id,questionFactory) {
     this.answered = 0;    
     this.time= 0;
     this.improving = false;
+
+    this.getId = function() {
+	return this.id;
+   }
     
     this.getAvgTime = function() {
        	return  Math.floor(this.time/this.answered/1000);
@@ -247,10 +247,6 @@ function Round(id,questionFactory) {
     
     this.isImproving = function() {
         return this.improving;
-    };
-    
-    this.getId = function() {
-        return this.id;
     };
     
     this.addQuestion = function(question) {
@@ -269,14 +265,15 @@ function Round(id,questionFactory) {
         return answer.length == (this.curQuestion.getAnswer()+"").length;
     };
     this.answerMatches= function(answer) {
-        if(answer.val() == question.getAnswer()) {
+        if(answer == this.curQuestion.getAnswer()) {
        	    var old_avg = this.getAvgTime();
        	    
    	        this.answered++;
    	        this.time  += (new Date().getTime() - this.start);
    	        
        	    var avg = this.getAvgTime();
-       	    this.improving = (old_avg*1000 < avg); 
+       	    this.improving = (old_avg > avg); 
+	    return true;
         }
     };
     
@@ -298,7 +295,7 @@ function Question(prompt,answer) {
 
 
 // UI events
-function question() {
+function question_cb() {
     //TODO: make this selection oncheck
     Q.getCurrentGrade().setCurrentRound( $("input[name=round]:checked").val() );
    
@@ -311,26 +308,26 @@ function question() {
    $( "#answer").focus();
 }
 
-function answer() {
+function answer_cb() {
 	var answer = $("#answer");
     answer.val( answer.val().replace(/[^0-9\.]/g,'') );  
     
     var cur_round = Q.getCurrentGrade().getCurrentRound();
-    if(cur_round.answerLongEnough(answer))  {                   
-        if(cur_round.answerMatches(answer)) {
-       	    $( "#time"+round ).text(cur_round.getAvgTime());
+    if(cur_round.answerLongEnough(answer.val()))  {                   
+        if(cur_round.answerMatches(answer.val())) {
+       	    $( "#time"+cur_round.getId() ).text(cur_round.getAvgTime());
        	    
    	    	if(!cur_round.isImproving()) {
-   	    		$( "#time"+round ).animate({backgroundColor: 'red'}, 1000);
+   	    		$( "#time"+cur_round.getId() ).animate({backgroundColor: 'red'}, 1000);
    	    	} else {
-   	    		$( "#time"+round ).animate({backgroundColor: 'green'}, 1000);
+   	    		$( "#time"+cur_round.getId() ).animate({backgroundColor: 'green'}, 1000);
    	    	}
        	    
         	$( "#correct" ).show(1);
        	    $( "#correct" ).fadeOut(4000);
        	    $( "#wrong" ).hide();
     //   	    speak("You're smart");
-        	question();
+        	question_cb();
         } else {
        		$( "#answer").select();
         	$( "#wrong" ).show(1);
@@ -338,6 +335,7 @@ function answer() {
        	    $( "#correct" ).hide();
        	    
        	    speak("Oops");
+	}
     }
 }
 
@@ -345,10 +343,10 @@ function initialize() {
    $( "#correct" ).hide();
    $( "#wrong" ).hide();
    $( "#roundChoice" ).buttonset();
-   $( "#roundChoice input" ).click(question);
+   $( "#roundChoice input" ).click(question_cb);
    
-   $("#answer").keyup(answer);
-   question();
+   $("#answer").keyup(answer_cb);
+   question_cb();
    
    $( "#helpLink" ).click(function() { $("#help").dialog("open")});
    $( "#help" ).dialog({
