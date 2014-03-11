@@ -160,7 +160,12 @@ function question_cb() {
     var cur_question = Q.getCurrentGrade().getCurrentRound().nextQuestion();
    
    $( "#question" ).text(cur_question.getPrompt());
-   speak(cur_question.getPrompt(), {pitch: 70, speed: 250});
+   p = cur_question.getPrompt().replace("-","minus");
+   p = p.replace("q","quarters");
+   p = p.replace("n","nickels");
+   p = p.replace("d","dimes");
+   p = p.replace("p","pennies");
+   speak(p, {pitch: 70, speed: 250});
    
    $( "#answer").val("");
    $( "#answer").focus();

@@ -122,6 +122,7 @@ Q.getGrade(2)
        return new Question(prompt,answer);
     })
         .addQuestion([1, 2, 4, 7])
+        .addQuestion([5, 6, 8, 11])
         .addQuestion([90,80,70,60])
         .addQuestion([80, 70, 60, 50])
         .addQuestion([95, 90, 85, 80]) 
@@ -161,8 +162,14 @@ Q.getGrade(2)
         
         return new Question(prompt,answer);
     })
+        .addQuestion([1,2,3,4])
+        .addQuestion([1,3,2,4])
+        .addQuestion([2,3,2,1])
         .addQuestion([2,3,2,2])
         .addQuestion([3,2,3,4])
+        .addQuestion([3,1,1,3])
+        .addQuestion([2,1,4,4])
+        .addQuestion([1,1,4,1])
         .addQuestion([1,2,3,2]);
 
 Q.getGrade(2)
@@ -180,6 +187,9 @@ Q.getGrade(2)
         return new Question(prompt,answer);
     })
     .addQuestion([23,24])
+    .addQuestion([58,43])
+    .addQuestion([28,51])
+    .addQuestion([99,-54])
     .addQuestion([45,32])
     .addQuestion([57,-41]);
 
