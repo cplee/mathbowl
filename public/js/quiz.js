@@ -160,7 +160,7 @@ function question_cb() {
     var cur_question = Q.getCurrentGrade().getCurrentRound().nextQuestion();
    
    $( "#question" ).text(cur_question.getPrompt());
-   p = cur_question.getPrompt().replace("-","minus");
+   p = cur_question.getPrompt().replace(" - "," mynis ");
    p = p.replace("q","quarters");
    p = p.replace("n","nickels");
    p = p.replace("d","dimes");
