@@ -53,8 +53,8 @@ function Grade(id,label) {
         return this.label;
     };
     
-    this.addRound = function(questionFactory) {
-        var round = new Round(this.rounds.length+1,questionFactory);
+    this.addRound = function(questionFactory,title) {
+        var round = new Round(this.rounds.length+1,questionFactory,title);
         this.rounds.push(round);
         return round;
     };
@@ -85,9 +85,10 @@ function Grade(id,label) {
     };
 }
 
-function Round(id,questionFactory) {
+function Round(id,questionFactory,title) {
     this.id = id;
     this.questionFactory = questionFactory;
+    this.title = title;
     this.questions = [];
     this.start = 0;
     this.curQuestion;
@@ -107,6 +108,12 @@ function Round(id,questionFactory) {
         return this.improving;
     };
     
+    this.getTitle = function () {
+        if(!this.title)
+            return "Answer";
+        return this.title;
+    };
+    
     this.addQuestion = function(question) {
         var q = this.questionFactory(question);
         this.questions.push(q);
@@ -118,6 +125,9 @@ function Round(id,questionFactory) {
         this.curQuestion = this.questions[Math.floor(Math.random()*this.questions.length)];
         return this.curQuestion;
     };
+    this.currentQuestion = function() {
+        return this.curQuestion;
+    }
     
     this.answerLongEnough= function(answer) {
         return answer.length == (this.curQuestion.getAnswer()+"").length;
@@ -156,19 +166,26 @@ function Question(prompt,answer) {
 function question_cb() {
     Q.setCurrentGrade( $("input[name=grade]:checked").val() )
      .setCurrentRound( $("input[name=round]:checked").val() );
-   
-    var cur_question = Q.getCurrentGrade().getCurrentRound().nextQuestion();
-   
-   $( "#question" ).text(cur_question.getPrompt());
-   p = cur_question.getPrompt().replace(" - "," mynis ");
-   p = p.replace("q","quarters");
-   p = p.replace("n","nickels");
-   p = p.replace("d","dimes");
-   p = p.replace("p","pennies");
-   speak(p, {pitch: 70, speed: 250});
-   
-   $( "#answer").val("");
-   $( "#answer").focus();
+
+
+    $( "#answerLabel").html(Q.getCurrentGrade().getCurrentRound().getTitle()+"? ");
+
+    say_question( Q.getCurrentGrade().getCurrentRound().nextQuestion() );
+}
+
+function say_question(cur_question) {
+
+    $( "#question" ).text(cur_question.getPrompt());
+    p = cur_question.getPrompt().replace(" - "," mynis ");
+    p = p.replace("q","quarters");
+    p = p.replace("n","nickels");
+    p = p.replace("d","dimes");
+    p = p.replace("p","pennies");
+    speak(p, {pitch: 70, speed: 250});
+
+    $( "#answer").val("");
+    $( "#answer").focus();
+    
 }
 
 function answer_cb() {
@@ -202,6 +219,22 @@ function answer_cb() {
     }
 }
 
+function repeat_question() {
+    say_question( Q.getCurrentGrade().getCurrentRound().currentQuestion() );
+}
+
+function toggle_question() {
+   var checked = $( "#showQuestion" )[0].checked;
+    if(checked) {
+        $( "#question").show();
+        $( "#showQuestion" ).button( "option", "label", "Hide Question" );
+    } else {
+        $( "#question").hide();
+        $( "#showQuestion" ).button( "option", "label", "Show Question" );
+    }
+    $( "#answer").focus();
+}
+
 function initialize() {
    $( "#correct" ).hide();
    $( "#wrong" ).hide();
@@ -210,8 +243,17 @@ function initialize() {
    
    $( "#gradeChoice" ).buttonset();
    $( "#gradeChoice input" ).click(question_cb);
-   
-   $("#answer").keyup(answer_cb);
+
+   $( "#showQuestion" ).button();
+   $( "#showQuestion" ).click(toggle_question);
+    
+    $( "#repeatQuestion" ).button();
+    $( "#repeatQuestion" ).click(repeat_question);
+
+   $( "#question").hide();
+
+
+    $("#answer").keyup(answer_cb);
    question_cb();
    
    $( "#helpLink" ).click(function() { $("#help").dialog("open")});
