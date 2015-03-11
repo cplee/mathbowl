@@ -181,7 +181,7 @@ function say_question(cur_question) {
     p = p.replace("n","nickels");
     p = p.replace("d","dimes");
     p = p.replace("p","pennies");
-    speak(p, {pitch: 70, speed: 250});
+    speak(p, {pitch: 70, speed: 200, wordgap: 20});
 
     $( "#answer").val("");
     $( "#answer").focus();
