@@ -24,6 +24,20 @@ module.exports = function (grunt) {
 
   // Define the configuration for all the tasks
   grunt.initConfig({
+    aws: grunt.file.readJSON("credentials.json"),
+
+    s3: {
+      options: {
+        accessKeyId: "<%= aws.accessKeyId %>",
+        secretAccessKey: "<%= aws.secretAccessKey %>",
+        region: "us-west-2",
+        bucket: "mathbowl"
+      },
+      build: {
+        cwd: "dist/",
+        src: "**"
+      }
+    },
 
     // Project settings
     config: config,
@@ -381,6 +395,9 @@ module.exports = function (grunt) {
       'watch'
     ]);
   });
+
+  grunt.loadNpmTasks('grunt-aws');
+
 
   grunt.registerTask('server', function (target) {
     grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
