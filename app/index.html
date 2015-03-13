@@ -24,9 +24,11 @@
 
 <div class="container">
   <div class="row">
-    <h4 class="text-muted col-md-1">Grade</h4>
+    <h4 class="text-muted col-md-4 col-sm-6 col-xs-6">Grade</h4>
+    <h4 class="text-muted col-md-4 col-sm-6 col-xs-6">Round</h4>
+    <h4 class="text-muted col-md-4 hidden-xs hidden-sm">Question</h4>
 
-    <div id="gradeChoice" class="btn-group col-md-3" data-toggle="buttons">
+    <div id="gradeChoice" class="btn-group col-md-4 col-sm-6 col-xs-6" data-toggle="buttons">
       <label class="btn btn-primary active">
         <input type="radio" id="grade1" name="grade" checked="checked" value="1">1</input>
       </label>
@@ -37,10 +39,7 @@
         <input type="radio" id="grade3" name="grade" value="3">3</input>
       </label>
     </div>
-
-    <h4 class="text-muted col-md-1">Round</h4>
-
-    <div id="roundChoice" class="btn-group col-md-3" data-toggle="buttons">
+    <div id="roundChoice" class="btn-group col-md-4 col-sm-6 col-xs-6" data-toggle="buttons">
       <label class="btn btn-primary active">
         <input type="radio" id="round1" name="round" checked="checked" value="1">1</input>
       </label>
@@ -55,38 +54,36 @@
       </label>
     </div>
 
-    <button type="button" id="showQuestion" class="btn btn-primary col-md-2" autocomplete="off" data-toggle="button" aria-pressed="false" >
-      Show Question
-    </button>
 
-    <button type="button" id="repeatQuestion" class="btn btn-primary col-md-2" autocomplete="off">
-      Repeat Question
-    </button>
+    <div class="btn-group col-md-4 col-xs-8 col-sm-8">
+
+      <button type="button" id="showQuestion" class="btn btn-primary" autocomplete="off" data-toggle="button"
+              aria-pressed="false">
+        Show
+      </button>
+
+      <button type="button" id="repeatQuestion" class="btn btn-primary" autocomplete="off">
+        Repeat
+      </button>
+    </div>
   </div>
 
   <div class="row jumbotron">
     <h1 id="question"></h1>
-    <h4 class="text-muted col-md-2" id="answerLabel"></h4>
-    <input id="answer" class="form-control input-lg col-md-2" type="number">
+    <div id="answerGroup" class="form-group">
+        <h4 class="text-muted control-label col-xs-2 col-sm-2 col-md-2" id="answerLabel"></h4>
+        <input id="answer" class="form-control input-lg " type="number"1>
+        <span id="correct" class="glyphicon glyphicon-ok form-control-feedback input-lg" style="color: green"></span>
+        <span id="wrong" class="glyphicon glyphicon-remove form-control-feedback input-lg "></span>
+    </div>
   </div>
 
   <div class="row">
-    <label class="timeLabel col-md-2">Round1 <span class="badge time" id="time1"></span></label>
-    <label class="timeLabel col-md-2">Round2 <span class="badge time" id="time2"></span></label>
-    <label class="timeLabel col-md-2">Round3 <span class="badge time" id="time3"></span></label>
-    <label class="timeLabel col-md-2">Round4 <span class="badge time" id="time4"></span></label>
+    <label class="timeLabel col-xs-2">Round1 <span class="badge time" id="time1"></span></label>
+    <label class="timeLabel col-xs-2">Round2 <span class="badge time" id="time2"></span></label>
+    <label class="timeLabel col-xs-2">Round3 <span class="badge time" id="time3"></span></label>
+    <label class="timeLabel col-xs-2">Round4 <span class="badge time" id="time4"></span></label>
   </div>
-
-  <div id="correct" class="alert alert-success alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <strong>You're smart! &#9786;</strong>
-  </div>
-  <div id="wrong" class="alert alert-warning alert-dismissible" role="alert">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <strong>Oops! &#9785;</strong>
-  </div>
-
-
 
   <div id="audio"></div>
 </div>

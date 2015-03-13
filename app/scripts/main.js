@@ -183,7 +183,7 @@ function say_question(cur_question) {
   p = p.replace("n", "nickels");
   p = p.replace("d", "dimes");
   p = p.replace("p", "pennies");
-  speak(p, {pitch: 100, speed: 200, wordgap: 2});
+  //speak(p, {pitch: 100, speed: 200, wordgap: 2});
 
   $("#answer").val("");
   $("#answer").focus();
@@ -205,17 +205,19 @@ function answer_cb() {
         $("#time" + cur_round.getId()).css('backgroundColor', 'green');
       }
 
+      $("#answerGroup").removeClass("has-error");
+      $("#answerGroup").addClass("has-feedback");
+      $("#wrong").hide();
       $("#correct").show(1);
       $("#correct").fadeOut(4000);
-      $("#wrong").hide();
       question_cb();
     } else {
+      $("#correct").hide();
+      $("#answerGroup").addClass("has-error has-feedback");
       $("#answer").select();
       $("#wrong").show(1);
-      $("#wrong").fadeOut(4000);
-      $("#correct").hide();
 
-      speak("Oops");
+      //speak("Oops");
     }
   }
 }
@@ -228,10 +230,10 @@ function toggle_question() {
   var active = $("#showQuestion").hasClass('active');
   if (!active) {
     $("#question").text(Q.getCurrentGrade().getCurrentRound().currentQuestion().getPrompt());
-    $("#showQuestion").text("Hide Question");
+    $("#showQuestion").text("Hide");
   } else {
     $("#question").text(" ");
-    $("#showQuestion").text("Show Question");
+    $("#showQuestion").text("Show");
   }
   $("#answer").focus();
 }
