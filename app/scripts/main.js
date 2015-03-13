@@ -183,7 +183,7 @@ function say_question(cur_question) {
   p = p.replace("n", "nickels");
   p = p.replace("d", "dimes");
   p = p.replace("p", "pennies");
-  //speak(p, {pitch: 100, speed: 200, wordgap: 2});
+  speak(p, {pitch: 100, speed: 200, wordgap: 2});
 
   $("#answer").val("");
   $("#answer").focus();
@@ -217,7 +217,7 @@ function answer_cb() {
       $("#answer").select();
       $("#wrong").show(1);
 
-      //speak("Oops");
+      speak("Oops");
     }
   }
 }
