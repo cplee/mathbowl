@@ -90,21 +90,14 @@ function Round(id, questionFactory, title) {
   this.questions = [];
   this.start = 0;
   this.curQuestion;
-  this.answered = 0;
-  this.time = 0;
+  this.last10 = [];
+  this.bestLast10 = undefined;
   this.improving = false;
 
   this.getId = function () {
     return this.id;
   }
 
-  this.getAvgTime = function () {
-    return Math.floor(this.time / this.answered / 1000);
-  };
-
-  this.isImproving = function () {
-    return this.improving;
-  };
 
   this.getTitle = function () {
     if (!this.title)
@@ -132,15 +125,42 @@ function Round(id, questionFactory, title) {
   };
   this.answerMatches = function (answer) {
     if (answer == this.curQuestion.getAnswer()) {
-      var old_avg = this.getAvgTime();
+      var priorLast10 = this.getLast10();
 
-      this.answered++;
-      this.time += (new Date().getTime() - this.start);
+      this.last10.unshift( new Date().getTime() - this.start );
+      while(this.last10.length > 10) {
+        this.last10.pop();
+      }
 
-      var avg = this.getAvgTime();
-      this.improving = (old_avg > avg);
+      var last10 = this.getLast10();
+      if(last10 != undefined && (this.bestLast10 == undefined || last10 < this.bestLast10)) {
+        message("New record: "+(last10/1000)+"!");
+        this.bestLast10 = last10;
+      }
+
+      this.improving = last10 < priorLast10;
+      console.log("priorLast10: " +priorLast10+" last10:"+last10+" bestLast10:"+this.bestLast10+" improving:"+this.improving);
+
       return true;
     }
+  };
+
+  this.getAnswered = function() {
+    return this.last10.length;
+  }
+
+  this.getLast10 = function() {
+    if(this.last10.length < 10) {
+      return undefined;
+    }
+
+    return this.last10.reduce(function(prev, curr) { return prev + curr; });
+  };
+  this.isImproving = function () {
+    return this.improving;
+  };
+  this.getBestLast10 = function() {
+    return this.bestLast10;
   };
 
 
@@ -197,19 +217,33 @@ function answer_cb() {
   var cur_round = Q.getCurrentGrade().getCurrentRound();
   if (cur_round.answerLongEnough(answer.val())) {
     if (cur_round.answerMatches(answer.val())) {
-      $("#time" + cur_round.getId()).text(cur_round.getAvgTime());
+      var answered = cur_round.getAnswered();
+      $("#last10").text('');
+      $("#best10").text('');
+      if(answered == 10) {
+        var last10 = cur_round.getLast10() / 1000;
+        $("#last10").text(last10);
+        var best10 = cur_round.getBestLast10() / 1000;
+        $("#best10").text(best10);
+      } else if(answered == 1) {
+        message("Answer 9 more to achieve a time...");
+      } else if(answered == 5) {
+        message("Halfway there...keep it up!");
+      } else {
+      }
+
 
       if (!cur_round.isImproving()) {
-        $("#time" + cur_round.getId()).css('backgroundColor', 'red');
+        $("#last10").css('backgroundColor', 'red');
       } else {
-        $("#time" + cur_round.getId()).css('backgroundColor', 'green');
+        $("#last10").css('backgroundColor', 'green');
       }
 
       $("#answerGroup").removeClass("has-error");
       $("#answerGroup").addClass("has-feedback");
       $("#wrong").hide();
       $("#correct").show(1);
-      $("#correct").fadeOut(4000);
+      $("#correct").fadeOut(2000);
       question_cb();
     } else {
       $("#correct").hide();
@@ -217,9 +251,15 @@ function answer_cb() {
       $("#answer").select();
       $("#wrong").show(1);
 
-      speak("Oops");
     }
   }
+}
+
+function message(txt) {
+  $("#message").text(txt);
+  $("#message").show(1);
+  $("#message").fadeOut(4000);
+
 }
 
 function repeat_question() {
@@ -241,6 +281,7 @@ function toggle_question() {
 function initialize() {
   $("#correct").hide();
   $("#wrong").hide();
+  $("#message").hide();
 
 
   $(document).on('change', 'input:radio[id^="grade"]', question_cb);
