@@ -203,7 +203,9 @@ function say_question(cur_question) {
   p = p.replace("n", "nickels");
   p = p.replace("d", "dimes");
   p = p.replace("p", "pennies");
-  speak(p, {pitch: 100, speed: 200, wordgap: 2});
+  if (location.hash != '#mute') {
+    speak(p, {pitch: 100, speed: 200, wordgap: 2});
+  }
 
   $("#answer").val("");
   $("#answer").focus();
@@ -278,21 +280,47 @@ function toggle_question() {
   $("#answer").focus();
 }
 
+function get_username() {
+  return $("#username").val();
+}
+
+function save_username() {
+  console.log("Username: "+get_username());
+  if(typeof(Storage) !== "undefined") {
+    localStorage.setItem('username',get_username());
+  }
+  question_cb();
+}
+
 function initialize() {
   $("#correct").hide();
   $("#wrong").hide();
   $("#message").hide();
 
-
+  // handle clicks on grade and round
   $(document).on('change', 'input:radio[id^="grade"]', question_cb);
   $(document).on('change', 'input:radio[id^="round"]', question_cb);
 
+  // handle button clicks
   $("#showQuestion").click(toggle_question);
-
   $("#repeatQuestion").click(repeat_question);
 
+  // handle enter key in answer field
   $("#answer").keyup(answer_cb);
-  question_cb();
+
+  // handle form submit
+  $('#usernameForm').on('submit', function() { $('#usernameModal').modal('hide'); return false; });
+
+  // handle username save
+  $('#usernameModal').on('hidden.bs.modal', save_username);
+  $('#usernameModal').on('shown.bs.modal', function () { $('#username').focus(); })
+
+  // get username
+  if(typeof(Storage) !== "undefined") {
+    $("#username").val(localStorage.getItem('username'));
+  }
+  $('#usernameModal').modal('show');
+
 
 }
 

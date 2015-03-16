@@ -87,6 +87,26 @@
   <div id="audio"></div>
 </div>
 
+<!-- Small modal -->
+<div id="usernameModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">What's your name?</h4>
+      </div>
+      <div class="modal-body">
+        <form id="usernameForm" method="post">
+         <input id="username" class="form-control input-lg " autofocus="">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="usernameButton" class="btn btn-primary" data-dismiss="modal" type="submit">Let's Go!</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- build:js(.) scripts/vendor.js -->
 <!-- bower:js -->
