@@ -90,7 +90,7 @@ function Round(id, questionFactory, title) {
   this.title = title;
   this.questions = [];
   this.start = 0;
-  this.curQuestion;
+  this.curQuestionIndex = 0;
   this.last10 = [];
   this.improving = false;
   this.records = [];
@@ -125,18 +125,19 @@ function Round(id, questionFactory, title) {
 
   this.nextQuestion = function () {
     this.start = new Date().getTime();
-    this.curQuestion = this.questions[Math.floor(Math.random() * this.questions.length)];
-    return this.curQuestion;
+    this.curQuestionIndex += Math.max(1,Math.min(Math.floor(Math.random() * this.questions.length),this.questions.length-1)) ;
+    this.curQuestionIndex = this.curQuestionIndex % this.questions.length;
+    return this.currentQuestion();
   };
   this.currentQuestion = function () {
-    return this.curQuestion;
+    return this.questions[this.curQuestionIndex];
   }
 
   this.answerLongEnough = function (answer) {
-    return answer.length == (this.curQuestion.getAnswer() + "").length;
+    return answer.length == (this.currentQuestion().getAnswer() + "").length;
   };
   this.answerMatches = function (answer) {
-    if (answer == this.curQuestion.getAnswer()) {
+    if (answer == this.currentQuestion().getAnswer()) {
       var priorLast10 = this.getLast10();
 
       this.last10.unshift( new Date().getTime() - this.start );
@@ -231,14 +232,14 @@ function update_score() {
   var best10 = cur_round.getBestLast10() / 1000;
 
   var answered = cur_round.getAnswered();
-  $("#last10").text('');
+  $("#last10").text(' none ');
 
   if(answered == 10) {
     var last10 = cur_round.getLast10() / 1000;
     $("#last10").text(last10);
-  } else if(answered == 1) {
+  } else if(answered == 1 && isNaN(best10)) {
     message("Answer 9 more to achieve a time...");
-  } else if(answered == 5) {
+  } else if(answered == 5 && isNaN(best10)) {
     message("Halfway there...keep it up!");
   } else {
   }

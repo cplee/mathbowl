@@ -5,7 +5,7 @@ Q.getGrade(1)
   // pattern
   .addRound( function (q) {
     var prompt = q.join(", ");
-    var answer = q[3]+(q[3]-q[2]);
+    var answer = q[3]+(q[3]-q[2])+((q[3]-q[2]) - (q[2]-q[1]));
     return new Question(prompt,answer);
   })
 
