@@ -79,6 +79,7 @@ function Grade(id, label) {
 
   this.setCurrentRound = function (round_id) {
     this.curRound = this.getRound(round_id);
+    update_rank();
     return this.curRound;
   };
 }
@@ -91,13 +92,24 @@ function Round(id, questionFactory, title) {
   this.start = 0;
   this.curQuestion;
   this.last10 = [];
-  this.bestLast10 = undefined;
   this.improving = false;
+  this.records = [];
 
   this.getId = function () {
     return this.id;
   }
 
+  this.addRecord = function (name,time) {
+    this.records[name] = time;
+  }
+
+  this.getRanks = function() {
+    var r = [];
+    for(var key in this.records) {
+      r.push({username:key,time:this.records[key]});
+    }
+    return r.sort(function(a,b){ return a.time-b.time});
+  }
 
   this.getTitle = function () {
     if (!this.title)
@@ -133,13 +145,13 @@ function Round(id, questionFactory, title) {
       }
 
       var last10 = this.getLast10();
-      if(last10 != undefined && (this.bestLast10 == undefined || last10 < this.bestLast10)) {
-        message("New record: "+(last10/1000)+"!");
-        this.bestLast10 = last10;
+      var bestLast10 = this.getBestLast10();
+      if(last10 != undefined && (bestLast10 == undefined || last10 < bestLast10)) {
+        save_record(last10);
       }
 
       this.improving = last10 < priorLast10;
-      console.log("priorLast10: " +priorLast10+" last10:"+last10+" bestLast10:"+this.bestLast10+" improving:"+this.improving);
+      console.log("priorLast10: " +priorLast10+" last10:"+last10+" bestLast10:"+this.getBestLast10()+" improving:"+this.improving);
 
       return true;
     }
@@ -160,7 +172,7 @@ function Round(id, questionFactory, title) {
     return this.improving;
   };
   this.getBestLast10 = function() {
-    return this.bestLast10;
+    return this.records[get_username()];
   };
 
 
@@ -187,6 +199,8 @@ function question_cb() {
 
   $("#answerLabel").html(Q.getCurrentGrade().getCurrentRound().getTitle() + "? ");
 
+  update_score();
+
   say_question(Q.getCurrentGrade().getCurrentRound().nextQuestion());
 }
 
@@ -212,6 +226,31 @@ function say_question(cur_question) {
 
 }
 
+function update_score() {
+  var cur_round = Q.getCurrentGrade().getCurrentRound();
+  var best10 = cur_round.getBestLast10() / 1000;
+
+  var answered = cur_round.getAnswered();
+  $("#last10").text('');
+
+  if(answered == 10) {
+    var last10 = cur_round.getLast10() / 1000;
+    $("#last10").text(last10);
+  } else if(answered == 1) {
+    message("Answer 9 more to achieve a time...");
+  } else if(answered == 5) {
+    message("Halfway there...keep it up!");
+  } else {
+  }
+
+
+  if (!cur_round.isImproving()) {
+    $("#last10").css('backgroundColor', 'red');
+  } else {
+    $("#last10").css('backgroundColor', 'green');
+  }
+}
+
 function answer_cb() {
   var answer = $("#answer");
   answer.val(answer.val().replace(/[^0-9\.]/g, ''));
@@ -219,27 +258,6 @@ function answer_cb() {
   var cur_round = Q.getCurrentGrade().getCurrentRound();
   if (cur_round.answerLongEnough(answer.val())) {
     if (cur_round.answerMatches(answer.val())) {
-      var answered = cur_round.getAnswered();
-      $("#last10").text('');
-      $("#best10").text('');
-      if(answered == 10) {
-        var last10 = cur_round.getLast10() / 1000;
-        $("#last10").text(last10);
-        var best10 = cur_round.getBestLast10() / 1000;
-        $("#best10").text(best10);
-      } else if(answered == 1) {
-        message("Answer 9 more to achieve a time...");
-      } else if(answered == 5) {
-        message("Halfway there...keep it up!");
-      } else {
-      }
-
-
-      if (!cur_round.isImproving()) {
-        $("#last10").css('backgroundColor', 'red');
-      } else {
-        $("#last10").css('backgroundColor', 'green');
-      }
 
       $("#answerGroup").removeClass("has-error");
       $("#answerGroup").addClass("has-feedback");
@@ -292,6 +310,50 @@ function save_username() {
   question_cb();
 }
 
+function load_records(recordsData) {
+  var records = recordsData.val();
+  for(var key in records) {
+    var val = records[key]
+    Q.getGrade(val.grade).getRound(val.round).addRecord(val.username,val.time);
+  }
+
+  update_rank();
+}
+function update_rank() {
+  $("#rankTable > tbody").empty();
+  var i=1;
+  var ranks = Q.getCurrentGrade().getCurrentRound().getRanks();
+  for(var r in ranks) {
+    var rank = ranks[r];
+    $("#rankTable > tbody")
+      .append($('<tr>').addClass(rank.username==get_username()?'success':'')
+          .append($('<td>').text(i++))
+          .append($('<td>').text(rank.username))
+          .append($('<td>').text(rank.time/1000)));
+    console.log(rank);
+  }
+}
+
+
+function save_record(best10) {
+  var username = get_username();
+  var grade = Q.getCurrentGrade().getId();
+  var round = Q.getCurrentGrade().getCurrentRound().getId();
+
+  message("New record: "+(best10/1000)+"!");
+  var key = grade+"_"+round+"_"+username;
+  var val = {
+    username: username,
+    grade: grade,
+    round: round,
+    time: best10
+  }
+  var record = new Object();
+  record[key] = val;
+  firebaseRef.child('records').update(record);
+}
+
+var firebaseRef;
 function initialize() {
   $("#correct").hide();
   $("#wrong").hide();
@@ -320,6 +382,10 @@ function initialize() {
     $("#username").val(localStorage.getItem('username'));
   }
   $('#usernameModal').modal('show');
+
+
+  firebaseRef = new Firebase("https://fiery-heat-6182.firebaseio.com/");
+  firebaseRef.child('records').on("value",load_records);
 
 
 }

@@ -76,13 +76,22 @@
         <span id="correct" class="glyphicon glyphicon-ok form-control-feedback input-lg" style="color: green"></span>
         <span id="wrong" class="glyphicon glyphicon-remove form-control-feedback input-lg "></span>
     </div>
-    <div id="message" class="alert alert-success" role="alert"></div>
+    <div class="row">
+      <label class="timeLabel col-xs-4 pull-right">Last 10: <span class="badge time" id="last10"></span></label>
+    </div>
   </div>
 
-  <div class="row">
-    <label class="timeLabel col-xs-2">Last 10: <span class="badge time" id="last10"></span></label>
-    <label class="timeLabel col-xs-2">Best 10: <span class="badge time" id="best10"></span></label>
-  </div>
+  <div id="message" class="alert alert-success" role="alert"></div>
+
+  <table id="rankTable" class="table table-striped">
+      <thead>
+        <tr>
+          <th>Rank</th><th>Name</th><th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+  </table>
 
   <div id="audio"></div>
 </div>
@@ -111,6 +120,7 @@
 <!-- build:js(.) scripts/vendor.js -->
 <!-- bower:js -->
 <script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/firebase/firebase.js"></script>
 <script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/affix.js"></script>
 <script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/alert.js"></script>
 <script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/button.js"></script>
