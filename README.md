@@ -1,6 +1,5 @@
 # Mathbowl
-
-See example at [mathbowl.nektos.com](http://mathbowl.nektos.com)
+Created for my kids to practice for the district math bowl.  See example at [mathbowl.nektos.com](http://mathbowl.nektos.com)
 
 # Practice Questions
 
