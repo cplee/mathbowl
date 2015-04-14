@@ -213,7 +213,7 @@ function say_question(cur_question) {
     $("#question").text(" ");
   }
 
-  p = cur_question.getPrompt().replace(" - ", " mynis ");
+  p = cur_question.getPrompt().replace(" - ", " subtract ");
   p = p.replace("q", "quarters");
   p = p.replace("n", "nickels");
   p = p.replace("d", "dimes");
