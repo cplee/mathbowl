@@ -170,7 +170,7 @@ Q.getGrade(2)
        var answer = q[3]+(q[3]-q[2])+((q[3]-q[2]) - (q[2]-q[1]));
        return new Question(prompt,answer);
     })
-      .addQuestion([84,80.76,72])
+      .addQuestion([84,80,76,72])
       .addQuestion([6,16,26,36])
       .addQuestion([17,22,27,32])
       .addQuestion([13,33,53,73])
